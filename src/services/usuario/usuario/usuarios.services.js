@@ -1,16 +1,11 @@
 import api from "../../../utils/db/api"
 
-const usuarios = async()=>{
-    try {
-        const response = await api.get('/users')
-      return response.data
-    } catch (error) {
-        console.log(error.message)
-    }
+const usuarios = async () => {
+    const response = await api.get('/users')
+    return response.data
 }
 
- const crearUsuario = async (data) => {
-    console.log('Datos recibidos en crearUsuario:', data)
+const crearUsuario = async (data) => {
     const response = await api.post('/users', {
         ...data,
         estado: parseInt(data.estado),
@@ -19,16 +14,23 @@ const usuarios = async()=>{
     return response
 }
 
-const eliminarUsuario = async(id)=>{
-    try {
-        const response = await api.delete('/users/'+id)
-        return response.data
-    } catch (error) {
-        console.log(error.message)
-    }
+const editarUsuario = async (id, data) => {
+    const response = await api.put(`/users/${id}`, {
+        ...data,
+        estado: parseInt(data.estado),
+        rolId:  parseInt(data.rolId)
+    })
+    return response
 }
+
+const eliminarUsuario = async (id) => {
+  const response = await api.delete(`/users/${id}`)
+  return response
+}
+
 export {
     usuarios,
     crearUsuario,
+    editarUsuario,
     eliminarUsuario
 }

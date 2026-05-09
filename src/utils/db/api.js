@@ -87,8 +87,12 @@ api.interceptors.response.use(
     }
 
     if (status === 403) {
-      logout()
-      window.location.href = '/login?razon=inactivo'
+      const mensaje = error.response?.data?.message
+      if (mensaje === 'Usuario inactivo') {
+        logout()
+        window.location.href = '/login?razon=inactivo'
+      }
+
       return Promise.reject(error)
     }
 

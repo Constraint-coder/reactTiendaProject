@@ -8,7 +8,12 @@ import { Modal } from '../../../components/share/modal.component'
 export function UsuariosView() {
   const [data, setData] = useState([])
   const [isOpen, setIsOpen] = useState(false)
-  const onClose = () => setIsOpen(false)
+  const [isOpenEditar, setIsOpenEditar] = useState(false)
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null)
+  const onClose = () => setIsOpen(false)  
+  const onCloseEditar = () => setIsOpenEditar(false) 
+
+  
   const respuesta = async () => {
     try {
       const data = await usuarios()
@@ -18,6 +23,14 @@ export function UsuariosView() {
       alert(error.message)
     }
   }
+
+
+
+const editar = (item) => {
+  setUsuarioSeleccionado(item)
+  setIsOpenEditar(true)
+}
+
   const headers = [
     { key: "nombre", label: "Nombre" },
     {
@@ -38,25 +51,25 @@ export function UsuariosView() {
       )
     },
   ];
-  const eliminar = async (item) => {
-    const response = await eliminarUsuario(item.id)
-    console.log(response)
-    if (response.status === 200) {
-      respuesta()
-    }
+  
+const eliminar = async (item) => {
+  const confirmar = confirm(`¿Deseas eliminar a ${item.nombre}?`)
+  if (!confirmar) return
+
+  try {
+    await eliminarUsuario(item.id)
+    respuesta()
+  } catch (error) {
+    alert(error.response?.data?.message || 'Error al eliminar usuario')
   }
+}
   const items = data;
 
   const actions = [
     {
-      label: "Ver",
-      className: "bg-gray-500 hover:bg-gray-600",
-      onClick: (item) => console.log("Ver", item),
-    },
-    {
       label: "Editar",
       className: "bg-blue-500 hover:bg-blue-600",
-      onClick: (item) => console.log("Editar", item),
+     onClick: (item) => editar(item)
     },
     {
       label: (item) => item.estado ? "Desactivar" : "Activar",
@@ -77,7 +90,9 @@ export function UsuariosView() {
         <button onClick={() => setIsOpen(true)} className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium'>Crear Usuario</button>
       </div>
 
-      <Usuarios headers={headers} items={items} actions={actions} isOpen={isOpen} onClose={onClose}   respuesta={respuesta}   />
+      <Usuarios headers={headers} items={items} actions={actions} isOpen={isOpen} onClose={onClose}   respuesta={respuesta}         isOpenEditar={isOpenEditar}
+        onCloseEditar={onCloseEditar}
+        usuarioSeleccionado={usuarioSeleccionado}  />
       
       </div>
 

@@ -1,15 +1,14 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
-import { getRoles } from '../../../../services/roles/roles.services'
+import React, { useEffect, useState } from 'react' 
 import { Modal } from '../../../share/modal.component'
 import { useForm } from 'react-hook-form'
-import { schema } from './validationData'
+import { schemaEditar } from './validationData'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { crearUsuario } from '../../../../services/usuario/usuario/usuarios.services'
+import { editarUsuario } from '../../../../services/usuario/usuario/usuarios.services'
+import { getRoles } from '../../../../services/roles/roles.services'
 
-export function CrearUsuario({ isOpen, onClose, respuesta }) {
+export function EditarUsuario({ isOpen, onClose, respuesta, usuario }) {
 
-   const [roles, setRoles] = useState([])
+ const [roles, setRoles] = useState([])
 
   useEffect(() => {
     const cargarRoles = async () => {
@@ -32,20 +31,35 @@ export function CrearUsuario({ isOpen, onClose, respuesta }) {
       estado:   1,
       rolId:    ''
     },
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schemaEditar),
   })
 
-const onSubmit = async (data) => {
-  try {
-    await crearUsuario(data)
-    reset()
-    respuesta()
-    onClose()
-} catch (error) {
-  console.error(error.response?.data) // ← ver errores de validación
-  alert(error.response?.data?.message || 'Error al crear usuario')
-}
-}
+  // Cargar datos del usuario al abrir el modal
+  useEffect(() => {
+    if (usuario) {
+      reset({
+        nombre:     usuario.nombre,
+        email:    usuario.email,
+        password: '',
+        password_confirmation: '',
+        estado:   usuario.estado ? 1 : 0,
+        rolId:    usuario.rolId,
+      })
+    }
+  }, [usuario])
+
+  const onSubmit = async (data) => {
+    console.log('Datos a enviar:', data)
+    try {
+      await editarUsuario(usuario.id, data)
+      reset()
+      respuesta()
+      onClose()
+    } catch (error) {
+      console.error(error.response?.data)
+      alert(error.response?.data?.message || 'Error al editar usuario')
+    }
+  }
 
   const handleCancel = () => {
     reset()
@@ -54,13 +68,13 @@ const onSubmit = async (data) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h2 className='text-2xl font-bold mb-4'>Crear Usuario</h2>
+      <h2 className='text-2xl font-bold mb-4'>Editar Usuario</h2>
 
       <form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
 
         <div>
           <input type='text' placeholder='Nombre' className='border border-gray-300 rounded p-2 w-full' {...register('nombre')} />
-          {errors.name && <p className='text-red-500 text-xs mt-1'>{errors.name.message}</p>}
+          {errors.name && <p className='text-red-500 text-xs mt-1'>{errors.nombre.message}</p>}
         </div>
 
         <div>
@@ -69,12 +83,12 @@ const onSubmit = async (data) => {
         </div>
 
         <div>
-          <input type='password' placeholder='Contraseña' className='border border-gray-300 rounded p-2 w-full' {...register('password')} />
+          <input type='password' placeholder='Nueva contraseña (opcional)' className='border border-gray-300 rounded p-2 w-full' {...register('password')} />
           {errors.password && <p className='text-red-500 text-xs mt-1'>{errors.password.message}</p>}
         </div>
 
         <div>
-          <input type='password' placeholder='Confirmar Contraseña' className='border border-gray-300 rounded p-2 w-full' {...register('password_confirmation')} />
+          <input type='password' placeholder='Confirmar contraseña' className='border border-gray-300 rounded p-2 w-full' {...register('password_confirmation')} />
           {errors.password_confirmation && <p className='text-red-500 text-xs mt-1'>{errors.password_confirmation.message}</p>}
         </div>
 
@@ -96,14 +110,13 @@ const onSubmit = async (data) => {
           </select>
           {errors.rolId && <p className='text-red-500 text-xs mt-1'>{errors.rolId.message}</p>}
         </div>
+
         <div className='flex gap-2'>
-          <button type='submit' className='bg-green-500 text-white rounded p-2 flex-1'>Crear</button>
-          
+          <button type='submit' className='bg-blue-500 text-white rounded p-2 flex-1'>Guardar</button>
           <button type='button' onClick={handleCancel} className='bg-red-500 text-white rounded p-2 flex-1'>Cancelar</button>
         </div>
 
       </form>
-      <div></div>
     </Modal>
   )
 }
