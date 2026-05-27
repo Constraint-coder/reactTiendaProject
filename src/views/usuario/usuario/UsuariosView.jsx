@@ -37,9 +37,9 @@ const editar = (item) => {
       key: "email", label: "Email"
     },
   { 
-    key: "rol", 
+    key: "roles", 
     label: "Rol",
-    render: (item) => item.rol?.nombre ?? 'Sin rol'  // ← extraer el nombre
+   render: (item) => item.roles.length > 0 ? item.roles[0].name : 'Sin rol'
   },
     {
       key: "estado",
@@ -52,8 +52,10 @@ const editar = (item) => {
     },
   ];
   
+  const inactiv = async (item) => {}
+
 const eliminar = async (item) => {
-  const confirmar = confirm(`¿Deseas eliminar a ${item.nombre}?`)
+  const confirmar = confirm(`¿Deseas desactivar a ${item.nombre}?`)
   if (!confirmar) return
 
   try {
@@ -72,8 +74,8 @@ const eliminar = async (item) => {
      onClick: (item) => editar(item)
     },
     {
-      label: (item) => item.estado ? "Desactivar" : "Activar",
-      className: (item) => item.estado ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600",
+      label: (item) => item.estado ? "Desactivar" : "Inactivo",
+      className: (item) => item.estado ? "bg-red-500 hover:bg-red-600" : "bg-gray-500 hover:bg-gray-600 hidden",
       onClick: (item) => eliminar(item),
     },
   ];

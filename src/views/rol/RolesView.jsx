@@ -16,17 +16,20 @@ export  function RolesView() {
     try {
       const data = await getRoles()
       setData(data)
+      console.log('data:', data)
     } catch (error) {
       alert(error.message)
     }
   }
 
   const eliminar = async (item) => {
-    const confirmar = confirm(`¿Deseas eliminar el rol "${item.nombre}"?`)
+    const confirmar = confirm(`¿Deseas eliminar el rol "${item.id}"?`)
+
     if (!confirmar) return
 
     try {
-      await eliminarRol(item.id)
+      const res = await eliminarRol(item.id)
+      console.log('Respuesta de eliminación:', res)
       respuesta()
     } catch (error) {
       alert(error.response?.data?.message || 'Error al eliminar rol')
@@ -42,7 +45,11 @@ const editar = (item) => {
 }
 
   const headers = [
-    { key: 'nombre', label: 'Nombre' },
+    { key: 'name', label: 'Nombre' },
+    {
+      key: 'guard_name',
+      label: 'guard_name',
+    },
     {
       key: 'estado',
       label: 'Estado',

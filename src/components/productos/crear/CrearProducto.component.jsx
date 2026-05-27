@@ -56,15 +56,7 @@ export function CrearProductoComponent({ isOpen, onClose, respuesta }) {
         </div>
 
         {/* Estado */}
-        <div>
-          <select
-            className='border border-gray-300 rounded p-2 w-full'
-            {...register('estado')}
-          >
-            <option value={1}>Activo</option>
-            <option value={0}>Inactivo</option>
-          </select>
-        </div>
+      
 
         {/* Botones */}
         <div className='flex gap-2'>

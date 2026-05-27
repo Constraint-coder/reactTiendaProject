@@ -8,10 +8,10 @@ const API_URL = import.meta.env.VITE_URL_BACK || 'http://127.0.0.1:8000/api'
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000,
-    Authorization: `Bearer ${localStorage.getItem('token')}`, 
-    headers: {
-    'Accept':       'application/json',
-    'Content-Type': 'application/json',
+  headers: {
+    'Accept':         'application/json',
+    'Content-Type':   'application/json',
+    'Authorization':  `Bearer ${localStorage.getItem('token')}`, // ✅ dentro de headers
   },
 })
 
@@ -38,7 +38,7 @@ const programarAdvertencia = () => {
   // Advertencia 5 minutos antes
   timerAdvertencia = setTimeout(() => {
     const continuar = confirm(
-      '⚠️ Tu sesión expira en 5 minutos.\n¿Deseas continuar trabajando?'
+      ' Tu sesión expira en 5 minutos.\n¿Deseas continuar trabajando?'
     )
 
     if (continuar) {
@@ -81,16 +81,22 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response?.status
 
-    if (status === 401) {
-      logout()
-      return Promise.reject(error)
-    }
+      if (status === 401) {
+        const url = error.config?.url
+
+        // evita logout en requests de inicialización
+        if (!url.includes('login')) {
+          logout()
+        }
+
+        return Promise.reject(error)
+      }
 
     if (status === 403) {
       const mensaje = error.response?.data?.message
       if (mensaje === 'Usuario inactivo') {
-        logout()
-        window.location.href = '/login?razon=inactivo'
+        loginfaild()
+       
       }
 
       return Promise.reject(error)
@@ -121,6 +127,13 @@ export const logout = () => {
   localStorage.removeItem('token')
   window.location.href = '/login'
 }
+
+export const loginfaild = () => {
+  limpiarTimers()
+  localStorage.removeItem('token')
+
+}
+
 
 // ==============================
 // EXPORT
