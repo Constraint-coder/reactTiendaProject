@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import {
-  getProductos,
-  eliminarProducto
-} from '../../services/productos/productos.services'
-import Productos from '../../components/productos/Producto.component'
+  getLotes,
+  eliminarLote
+} from '../../services/lotes/lotes.services'
+import Lotes from '../../components/lotes/Lotes.component'
 import { Titulos } from '../../components/share/Titulos.component'
 
-export function ProductosView() {
+export function LotesView() {
 
   const [data, setData] = useState([])
   const [isOpen, setIsOpen] = useState(false)
   const [isOpenEditar, setIsOpenEditar] = useState(false)
-  const [productoSeleccionado, setProductoSeleccionado] = useState(null)
+  const [loteSeleccionado, setLoteSeleccionado] = useState(null)
 
   const onClose = () => setIsOpen(false)
   const onCloseEditar = () => setIsOpenEditar(false)
 
-  // Obtener productos
+  // Obtener lotes
   const respuesta = async () => {
     try {
-      const data = await getProductos()
+      const data = await getLotes()
+      console.log('Lotes obtenidos:', data)
       setData(data)
     } catch (error) {
       alert(error.message)
@@ -28,27 +29,33 @@ export function ProductosView() {
 
   // Eliminar (desactivar)
   const eliminar = async (item) => {
-    const confirmar = confirm(`¿Deseas eliminar el producto "${item.nombre}"?`)
+    const confirmar = confirm(`¿Deseas eliminar el lote "${item.numeroLote}"?`)
     if (!confirmar) return
 
     try {
-      await eliminarProducto(item.id)
+      await eliminarLote(item.id)
       respuesta()
     } catch (error) {
-      alert(error.response?.data?.message || 'Error al eliminar producto')
+      alert(error.response?.data?.message || 'Error al eliminar lote')
     }
   }
 
   // Editar
   const editar = (item) => {
-    console.log('Producto seleccionado:', item)
-    setProductoSeleccionado(item)
+    console.log('Lote seleccionado:', item)
+    setLoteSeleccionado(item)
     setIsOpenEditar(true)
   }
 
   // Encabezados tabla
   const headers = [
-    { key: 'nombre', label: 'Nombre' },
+    { key: 'numeroLote', label: 'Número de Lote' },
+    { key: 'fechaIngreso', label: 'Fecha de Ingreso' },
+    {key:'precioCompra', label:'Precio de Compra'},
+    {key:'precioVenta', label:'Precio de Venta'},
+    {key:'cantidadInicial', label:'Cantidad'},
+    {key:'cantidadDisponible', label:'Cantidad Disponible'},
+     {key: 'producto', label: 'Producto', render: (item) => item.productos?.nombre || '' },// Relación producto-lote
     
     {
       key: 'estado',
@@ -88,7 +95,7 @@ export function ProductosView() {
   return (
     <div className='w-full px-4 sm:px-6 lg:px-8'>
 
-      <Titulos titulo="Productos" />
+      <Titulos titulo="Lotes" />
 
       {/* Botón crear */}
       <div className='flex justify-end mb-4'>
@@ -96,12 +103,12 @@ export function ProductosView() {
           onClick={() => setIsOpen(true)}
           className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium'
         >
-          Crear Producto
+          Crear Lote
         </button>
       </div>
 
       {/* Tabla + modales */}
-      <Productos
+      <Lotes
         headers={headers}
         items={data}
         actions={actions}
@@ -110,7 +117,7 @@ export function ProductosView() {
         respuesta={respuesta}
         isOpenEditar={isOpenEditar}
         onCloseEditar={onCloseEditar}
-        productoSeleccionado={productoSeleccionado}
+        loteSeleccionado={loteSeleccionado}
       />
 
     </div>

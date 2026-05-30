@@ -23,6 +23,7 @@ export default function Login() {
     try {
       await login(form)
       console.log('Login exitoso:', form.email) // ← agrega esto
+      navigate('/dashboard')
 
     } catch (err) {
       const status = err.response?.status
