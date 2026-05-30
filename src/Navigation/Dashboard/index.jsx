@@ -63,7 +63,21 @@ export function DashboardRoute() {
             </ProtectedRoute>
           }
         />
-
+          <Route
+          path="historial-ventas/*"
+          element={
+            <ProtectedRoute permission="ver ventas">
+              <HistorialVentasView />
+            </ProtectedRoute>
+          }
+        />
+          <Route path="reportes/*"
+              element={
+                <ProtectedRoute permission="ver reportes">
+                  <ReportesView />
+                </ProtectedRoute>
+              }
+            />
 
         <Route path="scan" element={
           <ProtectedRoute permission="usar pos">
