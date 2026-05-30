@@ -4,6 +4,7 @@ import { usuarios, eliminarUsuario } from '../../../services/usuario/usuario/usu
 import Usuarios from '../../../components/Usuarios/usuario/Usuario.component'
 import { Titulos } from '../../../components/share/Titulos.component'
 import { Modal } from '../../../components/share/modal.component'
+import { hasPermission } from '../../../services/auth/auth.services'
 
 export function UsuariosView() {
   const [data, setData] = useState([])
@@ -88,9 +89,11 @@ const eliminar = async (item) => {
     <>
       <div className='w-full px-4 sm:px-6 lg:px-8'>
         <Titulos titulo="Usuarios" />
+      {hasPermission('crear usuarios') && (
       <div className='flex justify-end mb-4'>
         <button onClick={() => setIsOpen(true)} className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium'>Crear Usuario</button>
       </div>
+      )}
 
       <Usuarios headers={headers} items={items} actions={actions} isOpen={isOpen} onClose={onClose}   respuesta={respuesta}         isOpenEditar={isOpenEditar}
         onCloseEditar={onCloseEditar}

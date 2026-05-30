@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router'
+import { Routes, Route, Navigate } from 'react-router'
 import DashBoardView from '../../views/Layout/DashBoard.view'
 import { UsuarioRoutes } from './usuario'
 import { RolRoutes } from './rol'
@@ -7,11 +7,14 @@ import { ProductoRoutes } from './productos'
 import ProtectedRoute from '../../middleware/ProtectedRoute'
 import { LotesRoutes } from './lotes'
 import { CodigoBarraRoutes } from './CodigoBarra'
+import { HistorialVentasView } from '../../views/ventas/HistorialVentasView'
+import { ReportesView } from '../../views/ventas/ReportesView'
 
 
 export function DashboardRoute() {
   return (
     <Routes>
+       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
       {/* LAYOUT PADRE */}
       <Route path="/dashboard" element={<DashBoardView />}>
@@ -60,8 +63,28 @@ export function DashboardRoute() {
             </ProtectedRoute>
           }
         />
+          <Route
+          path="historial-ventas/*"
+          element={
+            <ProtectedRoute permission="ver ventas">
+              <HistorialVentasView />
+            </ProtectedRoute>
+          }
+        />
+          <Route path="reportes/*"
+              element={
+                <ProtectedRoute permission="ver reportes">
+                  <ReportesView />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route path="scan" element={<ScanView />} />
+        <Route path="scan" element={
+          <ProtectedRoute permission="usar pos">
+            <ScanView />
+          </ProtectedRoute>
+        } />
+
 
       </Route>
 
