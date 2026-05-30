@@ -5,6 +5,9 @@ import { RolRoutes } from './rol'
 import { ScanView } from '../../views/scan/ScanView'
 import { ProductoRoutes } from './productos'
 import ProtectedRoute from '../../middleware/ProtectedRoute'
+import { LotesRoutes } from './lotes'
+import { CodigoBarraRoutes } from './CodigoBarra'
+
 
 export function DashboardRoute() {
   return (
@@ -36,6 +39,24 @@ export function DashboardRoute() {
           element={
             <ProtectedRoute permission="ver productos">
               <ProductoRoutes />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="lotes/*"
+          element={
+            <ProtectedRoute permission="ver lotes">
+              <LotesRoutes />
+            </ProtectedRoute>
+          }
+        />
+
+          <Route
+          path="codigosbarra/*"
+          element={
+            <ProtectedRoute permission="ver codigos">
+              <CodigoBarraRoutes />
             </ProtectedRoute>
           }
         />
